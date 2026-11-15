@@ -188,69 +188,72 @@ export default async function SpecialOfferDetailPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(graph) }} />
 
-      <main className="px-5 pb-16">
-        <div className="mx-auto max-w-[1240px]">
-          <nav className="pb-[22px] pt-7 text-[14.5px] text-muted" aria-label="Breadcrumb">
+      <main className="pb-4">
+        <div className="mx-auto max-w-[1200px] px-4">
+          <nav className="flex flex-wrap gap-x-2 pt-[22px] text-[13px] text-muted" aria-label="Breadcrumb">
             <Link href="/" className="-mx-1 -my-3 inline-block px-1 py-3 transition-colors hover:text-brand">
               Home
             </Link>
-            {' / '}
-            <Link
-              href="/special-offers"
-              className="-mx-1 -my-3 inline-block px-1 py-3 transition-colors hover:text-brand"
-            >
+            /
+            <Link href="/special-offers" className="-mx-1 -my-3 inline-block px-1 py-3 transition-colors hover:text-brand">
               {COPY.nav.specialOffers}
             </Link>
-            {' / '}
-            <span className="font-medium text-ink">{offer.title}</span>
+            /
+            <span className="font-semibold text-ink [overflow-wrap:anywhere]">{offer.title}</span>
           </nav>
 
-          {/* The artwork alone, laid out as on winpalack: full width, the
-              whole banner readable (`object-contain`), and no block at all
-              when the offer has no artwork. The ground is `paper`, one step
-              off the page — the dark `night` box used before showed as a frame
-              around every banner whose shape is not exactly 16:6. */}
-          {banner && (
-            <div className="relative mb-6 aspect-[16/6] overflow-hidden rounded-[20px] bg-paper">
-              <Image
-                src={banner}
-                alt={offer.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 1240px"
-                preload
-                fetchPriority="high"
-                className="object-contain object-center"
-              />
-            </div>
-          )}
+          {/* The mockup's `.dh`: the artwork beside the offer panel from
+              980px, stacked below. Without artwork the BONUS is set on the
+              banner well instead; with neither, the panel takes the width. */}
+          <div className={`mt-5 grid grid-cols-1 gap-5 ${banner || offer.bonuses ? 'min-[61.25rem]:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]' : ''}`}>
+            {banner ? (
+              <div className="ban relative aspect-[16/6] overflow-hidden rounded-[20px] border border-line-soft min-[61.25rem]:aspect-auto min-[61.25rem]:min-h-[320px]">
+                <Image
+                  src={banner}
+                  alt={offer.title}
+                  fill
+                  sizes="(max-width: 980px) 100vw, 640px"
+                  preload
+                  fetchPriority="high"
+                  className="object-contain object-center"
+                />
+              </div>
+            ) : (
+              offer.bonuses && (
+                // aria-hidden: the panel beside it states the same bonus as text.
+                <div aria-hidden className="ban flex min-h-[200px] items-end overflow-hidden rounded-[20px] border border-line-soft p-7 min-[61.25rem]:min-h-[320px]">
+                  <p className="font-display text-[clamp(36px,5vw,64px)] leading-none text-brand [overflow-wrap:anywhere]">{offer.bonuses}</p>
+                </div>
+              )
+            )}
 
-          {/* Title and rating on the left, the bonus figure and the CTA on
-              the right: the two things a visitor came for, both above the fold
-              on a desktop. Stacks in source order on a phone, where "what is
-              it" still reads before "claim it". */}
-          <header className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h1 className="font-display text-[30px] font-extrabold leading-[1.08] text-ink sm:text-[42px]">
-                {offer.title}
-              </h1>
-              <p
-                className="mt-1.5 text-[18px] leading-none tracking-[2px] text-gold"
-                role="img"
-                aria-label={`${offer.rating} out of 5`}
-              >
-                {'★'.repeat(offer.rating)}
-                <span className="text-star-empty" aria-hidden>
-                  {'★'.repeat(5 - offer.rating)}
-                </span>
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center lg:justify-end">
-              {offer.bonuses && (
-                <p className="rounded-xl border border-brand/35 bg-brand-tint px-6 py-5 text-[18px] font-bold text-brand-dark sm:text-[22px]">
-                  {offer.bonuses}
-                </p>
+            {/* The offer panel — the mockup's `.side` on the cream paper. */}
+            <header className="flex flex-col justify-center gap-3.5 rounded-[20px] bg-card p-6 text-card-ink">
+              {(offer.bonus_category_name || offer.casino?.name) && (
+                <p className="lab lab-card">{[offer.bonus_category_name, offer.casino?.name].filter(Boolean).join(' · ')}</p>
               )}
+              <h1 className="font-display text-[clamp(28px,3.2vw,38px)] leading-[1.1] [overflow-wrap:anywhere]">{offer.title}</h1>
+              <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-card-soft">
+                <span className="leading-none tracking-[1px] text-gold" role="img" aria-label={`${offer.rating} out of 5`}>
+                  {'★'.repeat(offer.rating)}
+                  <span className="text-star-empty" aria-hidden>
+                    {'★'.repeat(5 - offer.rating)}
+                  </span>
+                </span>
+                <span className="tabular-nums">{offer.rating.toFixed(1)}</span>
+                {offer.casino && (
+                  <>
+                    <span aria-hidden>·</span>
+                    <span>
+                      Offer by{' '}
+                      <Link href={`/casinos/${offer.casino.slug}`} className="text-pine underline underline-offset-2 hover:text-card-ink">
+                        {offer.casino.name}
+                      </Link>
+                    </span>
+                  </>
+                )}
+              </div>
+              {offer.bonuses && <p className="font-display text-2xl leading-[1.2] text-pine [overflow-wrap:anywhere]">{offer.bonuses}</p>}
 
               {/* An EXPIRED offer keeps its page — the URL stays valid and the
                   terms stay readable — but it must never be presented as
@@ -258,13 +261,13 @@ export default async function SpecialOfferDetailPage({ params }: Props) {
                   than removed silently, so a visitor who followed an old link
                   understands why there is nothing to press. */}
               {offer.terms?.expired ? (
-                <p className="rounded-xl border border-line bg-surface px-5 py-4 text-[14px] font-semibold text-ink-soft">
+                <p className="rounded-xl border border-card-line bg-white px-5 py-4 text-[14px] font-semibold text-card-soft">
                   This offer ended
                   {offer.terms.expires_at ? (
                     <> on <time dateTime={offer.terms.expires_at}>{offer.terms.expires_at}</time></>
                   ) : null}
                   . It is no longer available to claim.{' '}
-                  <Link href="/special-offers" className="underline underline-offset-2 hover:text-brand">
+                  <Link href="/special-offers" className="underline underline-offset-2 hover:text-card-ink">
                     See current offers
                   </Link>
                 </p>
@@ -272,72 +275,43 @@ export default async function SpecialOfferDetailPage({ params }: Props) {
                 // Claim belongs to the Special Offers bonus type, matching the
                 // cards — see CLAIMABLE_BONUS_CATEGORY in SpecialOfferCard.
                 claimable && offer.affiliate_url && (
-                  <a
-                    href={offer.affiliate_url}
-                    target="_blank"
-                    rel="nofollow sponsored noopener"
-                    className="inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-xl bg-brand px-[26px] py-4 text-[15.5px] font-bold text-brand-ink shadow-[0_6px_18px_-8px_rgba(43,182,115,0.55)] transition-all hover:-translate-y-px hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                  >
+                  <a href={offer.affiliate_url} target="_blank" rel="nofollow sponsored noopener" className="btn-g min-h-12 px-[22px] text-[15px] sm:min-w-64 sm:self-start min-[61.25rem]:self-stretch">
                     {COPY.specialOffers.claim}
                   </a>
                 )
               )}
-            </div>
+              {offer.casino && (
+                <Link href={`/casinos/${offer.casino.slug}`} className="btn-l min-h-12 px-[22px] text-[15px] sm:min-w-64 sm:self-start min-[61.25rem]:self-stretch">
+                  Read the full review <span aria-hidden>→</span>
+                </Link>
+              )}
+              {/* Compliance under the CTA: read beside the button it qualifies. */}
+              <p className="text-xs text-card-muted">
+                18+. T&amp;Cs apply — read the full conditions on the operator&apos;s own site before
+                depositing.{' '}
+                <Link href="/responsible-gambling" className="underline underline-offset-2 hover:text-card-ink">
+                  Play responsibly
+                </Link>
+                .
+              </p>
+            </header>
+          </div>
 
-            {/* Compliance under the CTA, where winpalack carries its
-                affiliate note: read beside the button it qualifies. */}
-            <p className="text-[13px] text-muted lg:max-w-[22rem] lg:text-right">
-              18+. T&amp;Cs apply — read the full conditions on the operator&apos;s own site before
-              depositing.{' '}
-              <Link href="/responsible-gambling" className="underline underline-offset-2 hover:text-brand">
-                Play responsibly
-              </Link>
-              .
-            </p>
-          </header>
+          {/* The terms BEFORE the sales copy: a reader deciding whether to
+              deposit reads the wagering requirement first. */}
+          {offer.terms && <BonusTerms terms={offer.terms} />}
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_26rem]">
-            {/* The rail: terms, the compliance line and the operator link.
-                FIRST IN SOURCE so the wagering requirement is read before the
-                sales copy on a phone; `lg:order-2` moves it beside the
-                description on a desktop. That order is the point of the
-                change — the terms used to sit below the prose, where a reader
-                deciding whether to deposit had already stopped reading. */}
-            {(offer.terms || offer.casino) && (
-              <aside className="lg:order-2 lg:sticky lg:top-24 lg:self-start [&>section]:my-0 lg:[&_dl]:grid-cols-2">
-                {offer.terms && <BonusTerms terms={offer.terms} />}
-
-                {/* A card, not a bare line: beside a column of prose a lone
-                    sentence reads as a mistake. */}
-                {offer.casino && (
-                  <div className={`rounded-2xl border border-line bg-paper p-5 text-[15px] text-muted ${offer.terms ? 'mt-4' : ''}`}>
-                    <p>
-                      Offer by{' '}
-                      <Link
-                        href={`/casinos/${offer.casino.slug}`}
-                        className="font-bold text-brand underline underline-offset-2 hover:text-brand-dark"
-                      >
-                        {offer.casino.name}
-                      </Link>
-                    </p>
-                    <Link
-                      href={`/casinos/${offer.casino.slug}`}
-                      className="mt-3 inline-flex min-h-11 items-center font-bold text-brand underline underline-offset-4 hover:text-brand-dark"
-                    >
-                      Read the full review →
-                    </Link>
-                  </div>
-                )}
-              </aside>
-            )}
-
-            {offer.description && (
+          {offer.description && (
+            <section className="mt-10" aria-labelledby="about-offer">
+              <h2 id="about-offer" className="font-display text-[clamp(30px,3.6vw,44px)] leading-none text-ink">
+                About this offer
+              </h2>
               <div
-                className="prose min-w-0 max-w-none lg:order-1 lg:prose-lg"
+                className="prose mt-4 max-w-[72ch] prose-p:text-[17px] prose-p:leading-[1.8]"
                 dangerouslySetInnerHTML={{ __html: offer.description }}
               />
-            )}
-          </div>
+            </section>
+          )}
         </div>
       </main>
     </>

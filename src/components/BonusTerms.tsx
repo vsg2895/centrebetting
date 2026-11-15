@@ -15,9 +15,9 @@ import type { SpecialOfferTerms } from '@shared/types/specialOffer'
  * requirement stated without a route to the operator's own terms is the pattern
  * regulators object to.
  *
- * Styled as this site's at-a-glance panel (`.glance` in
- * sites/betpulsehq.html): the figures are the whole reason the page exists, so
- * they get the panel rather than a line of fine print.
+ * Styled as this site's at-a-glance tiles (`.gl` in
+ * sites/centrebetting-redesign.html): the figures are the whole reason the page
+ * exists, so they get tiles of their own rather than a line of fine print.
  */
 export default function BonusTerms({ terms }: { terms: SpecialOfferTerms }) {
   const rows: Array<[string, string]> = []
@@ -35,31 +35,26 @@ export default function BonusTerms({ terms }: { terms: SpecialOfferTerms }) {
   if (rows.length === 0 && !terms.terms_url && !terms.expires_at) return null
 
   return (
-    <section
-      className="my-[30px] rounded-2xl border border-line bg-paper p-7"
-      aria-labelledby="bonus-terms"
-    >
-      <h2 id="bonus-terms" className="font-display mb-5 text-[22px] font-bold text-ink">
+    <section className="mt-10" aria-labelledby="bonus-terms">
+      <h2 id="bonus-terms" className="font-display text-[clamp(30px,3.6vw,44px)] leading-none text-ink">
         Before you claim
       </h2>
 
       {rows.length > 0 && (
-        <dl className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+        <dl className={`mt-4 grid grid-cols-2 gap-2.5 sm:gap-3 ${TERM_COLS[rows.length]}`}>
           {rows.map(([label, value]) => (
-            <div key={label}>
-              <dt className="mb-1.5 text-[12.5px] font-bold uppercase tracking-[0.16em] text-muted">
-                {label}
-              </dt>
+            <div key={label} className="min-w-0 rounded-2xl border-[1.5px] border-line bg-paper px-3.5 py-3.5 sm:p-[18px]">
+              <dt className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">{label}</dt>
               {/* Tabular figures so the numbers line up between one offer and
                   the next and can be compared down a page rather than read one
                   at a time. */}
-              <dd className="text-[16.5px] font-semibold tabular-nums text-ink">{value}</dd>
+              <dd className="mt-1.5 font-display text-[19px] leading-[1.2] tabular-nums text-ink [overflow-wrap:anywhere] sm:text-[22px]">{value}</dd>
             </div>
           ))}
         </dl>
       )}
 
-      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-line pt-4 text-[13.5px]">
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[13.5px]">
         {terms.expires_at && !terms.expired && (
           <span className="text-muted">
             Offer ends{' '}
@@ -77,7 +72,7 @@ export default function BonusTerms({ terms }: { terms: SpecialOfferTerms }) {
             href={terms.terms_url}
             target="_blank"
             rel="nofollow sponsored noopener"
-            className="inline-flex min-h-11 items-center font-bold text-brand underline underline-offset-4 transition-colors hover:text-brand-dark"
+            className="inline-flex min-h-11 items-center font-semibold text-brand underline underline-offset-4 transition-colors hover:text-brand-dark"
           >
             T&amp;Cs apply — read the full terms
           </a>
@@ -85,4 +80,12 @@ export default function BonusTerms({ terms }: { terms: SpecialOfferTerms }) {
       </div>
     </section>
   )
+}
+
+/** One row of tiles from `sm`, as many columns as there are terms. Literal classes, so Tailwind sees them. */
+const TERM_COLS: Record<number, string> = {
+  1: 'sm:grid-cols-1',
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-3',
+  4: 'sm:grid-cols-4',
 }

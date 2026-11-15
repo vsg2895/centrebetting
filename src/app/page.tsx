@@ -6,17 +6,18 @@ import type { BonusSection } from '@/lib/api'
 import { buildItemListSchema, buildWebPageSchema, jsonLdScript, buildFaqSchema, SHARE_IMAGES } from '@/lib/seo'
 import { COPY } from '@/constants/copy'
 import { FAQ_ITEMS } from '@/constants/faq'
-import CasinoCard from '@/components/CasinoCard'
-import BonusCategoryNav from '@/components/BonusCategoryNav'
+import CasinoCard, { CASINO_GRID } from '@/components/CasinoCard'
+import BonusTabs from '@/components/BonusTabs'
 import CategoryNav from '@/components/CategoryNav'
-import SpecialOfferCard from '@/components/SpecialOfferCard'
+import FaqGrid from '@/components/FaqGrid'
+import SpecialOfferCard, { OFFER_GRID } from '@/components/SpecialOfferCard'
 import type { Category } from '@shared/types/category'
 import type { CasinoWithAttachment } from '@shared/types/casino'
 import type { SpecialOffer } from '@shared/types/specialOffer'
 import { SITE_URL } from '@/lib/config'
 import { casinosHeading } from '@/lib/categories'
 
-/** Offers shown per bonus type in the home page's Bonuses section — one row. */
+/** Offers shown per bonus type in the home page's Bonuses section — one tab's panel. */
 const HOME_BONUSES_PER_CATEGORY = 3
 
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? ''
@@ -66,12 +67,10 @@ export default async function HomePage({ searchParams }: Props) {
     // Runs alongside the others, so it costs no extra round-trip of latency, and
     // the public endpoint already excludes offers whose visibility is off.
     getSpecialOffers(undefined, 1),
-    // The bonus TYPES: the chip row under the hero AND the per-type Bonuses
-    // section further down, so each type brings its first
-    // HOME_BONUSES_PER_CATEGORY offers (one full row of the three-up grid).
-    // The chips only read names, marks and counts, which the server counts
-    // over the unlimited set. allSettled means a site without the Bonus area
-    // renders neither, and falls back to the plain Special offers grid.
+    // The bonus TYPES for the folder tabs: each type brings its first
+    // HOME_BONUSES_PER_CATEGORY offers for its panel, and its count over the
+    // unlimited set for its tab. allSettled means a site without the Bonus
+    // area renders no tabs, and falls back to the plain Special offers grid.
     getBonusArea(HOME_BONUSES_PER_CATEGORY),
   ])
 
@@ -129,86 +128,51 @@ export default async function HomePage({ searchParams }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(graph) }} />
 
       <main>
-        {/* Hero.
-
-            Centred, with the headline on a measure of its own: at 88px a line
-            that crosses the full 1,240px loses the reader between its ends, so
-            the column is capped and centred inside the section instead. The
-            only decoration is the green glow of `hero-wash` (globals.css). */}
-        <section className="hero-wash relative overflow-hidden">
-          <div className="relative mx-auto max-w-[1240px] px-5 pb-8 pt-8 text-center sm:pb-14 sm:pt-[72px] lg:pb-[56px]">
-            <div className="mx-auto max-w-[960px]">
-              {/* The eyebrow, with the heartbeat. One piece of motion on the
-                  site, and `prefers-reduced-motion` stops it — see
-                  globals.css. */}
-              <p className="inline-flex items-center gap-2.5 rounded-full border border-line-soft bg-paper px-3.5 py-1.5 font-mono text-[11px] font-bold uppercase sm:px-[18px] sm:py-2 sm:text-[12px] tracking-[0.2em] text-ink">
-                <span
-                  className="pulse-dot h-[7px] w-[7px] shrink-0 rounded-full bg-brand"
-                  aria-hidden
-                />
-                {COPY.home.heroEyebrow}
-              </p>
-
-              <h1 className="font-display mx-auto mb-3 mt-4 text-[30px] sm:mb-[22px] sm:mt-[26px] font-extrabold leading-none tracking-[-0.04em] text-balance text-ink sm:text-[62px] lg:text-[88px]">
-                {COPY.home.heroHeadline}
-                {/* The green words, inline as in the mockup, with its soft green
-                    bar behind their lower half (`hero-mark`, globals.css).
-                    `whitespace-nowrap` keeps the phrase on one line. */}
-                {' '}
-                <span className="hero-mark whitespace-nowrap text-brand">{COPY.home.heroHighlight}</span>
-              </h1>
-
-              <p className="mx-auto mb-5 max-w-[640px] text-pretty text-[15px] sm:mb-[34px] sm:text-[17px] leading-relaxed text-ink-soft lg:text-[20px]">
-                {COPY.home.heroSubtitle}
-              </p>
-
-              <div className="flex flex-col justify-center gap-2.5 sm:gap-3.5 sm:flex-row">
-                <Link
-                  href="/casinos"
-                  className="inline-flex min-h-[3.25rem] w-full sm:w-auto whitespace-nowrap items-center sm:min-h-[52px] sm:flex-none justify-center rounded-xl bg-brand px-6 py-3.5 text-base sm:px-[26px] sm:py-4 sm:text-[15.5px] font-bold text-brand-ink shadow-[0_6px_18px_-8px_rgba(43,182,115,0.55)] transition-all hover:-translate-y-px hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                >
-                  {COPY.home.featuredCasinos}
+        {/* Hero — the mockup's `.hero`: centred, the chip, the claim with its
+            green phrase, and the two ways in. */}
+        <section className="border-b border-line">
+          <div className="mx-auto max-w-[1200px] px-4 pb-12 pt-14 text-center sm:pb-16 sm:pt-[72px]">
+            <p className="chip-dot inline-flex items-center gap-2 rounded-full border border-line-soft px-3.5 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-ink-soft">
+              {COPY.home.heroEyebrow}
+            </p>
+            <h1 className="mx-auto mt-[22px] max-w-[960px] font-display text-[clamp(42px,12vw,46px)] leading-[0.98] text-balance [overflow-wrap:break-word] sm:text-[clamp(46px,7vw,96px)]">
+              {COPY.home.heroHeadline} <em className="text-brand">{COPY.home.heroHighlight}</em>
+            </h1>
+            <p className="mx-auto mt-[22px] max-w-[640px] text-lg text-ink-soft">{COPY.home.heroSubtitle}</p>
+            <div className="mt-[30px] flex flex-wrap justify-center gap-3">
+              <Link href="/casinos" className="btn-g min-h-12 px-[22px] text-[15px]">
+                {COPY.home.featuredCasinos}
+              </Link>
+              {anyOffersVisible && (
+                <Link href="/special-offers" className="btn-o min-h-12 px-[22px] text-[15px]">
+                  {COPY.home.specialOffers}
                 </Link>
-                {anyOffersVisible && (
-                  <Link
-                    href="/special-offers"
-                    className="inline-flex min-h-[3.25rem] w-full sm:w-auto whitespace-nowrap items-center sm:min-h-[52px] sm:flex-none justify-center rounded-xl border border-line-soft bg-transparent px-6 py-[13px] text-base sm:px-[26px] sm:py-4 sm:text-[15.5px] font-bold text-ink transition-all hover:-translate-y-px hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                  >
-                    {COPY.home.specialOffers}
-                  </Link>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </section>
 
-        {/* Casinos by category */}
-        <section className="px-5 pt-8 sm:pt-[72px]" aria-labelledby="top-casinos-heading">
-          <div className="mx-auto max-w-[1240px]">
-            <div className="mb-4 flex items-end justify-between gap-4 sm:mb-6">
-              <div>
-                <h2
-                  id="top-casinos-heading"
-                  className="font-display text-[24px] font-extrabold leading-[1.08] text-ink sm:text-[38px] lg:text-[46px]"
-                >
-                  {COPY.home.topCasinosTitle}
-                </h2>
-                <p className="mt-1 text-[15px] text-ink-soft sm:mt-2 sm:text-[17px]">{COPY.home.topCasinosSubtitle}</p>
-              </div>
-            </div>
+        {/* Compare — the category pills, then the cards. */}
+        <section className="py-14 sm:py-[72px]" aria-labelledby="top-casinos-heading">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <p className="lab">{COPY.home.compareLabel}</p>
+            <h2 id="top-casinos-heading" className={`mt-2.5 ${SECTION_H2}`}>
+              {COPY.home.topCasinosTitle}
+            </h2>
+            <p className="mt-3 max-w-[540px] text-ink-soft">{COPY.home.topCasinosSubtitle}</p>
 
             {categories.length > 0 && selected && (
-              <div className="mb-5 sm:mb-6">
+              <div className="mt-6">
                 <CategoryNav categories={categories} selected={selected} />
               </div>
             )}
 
             {casinos.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-line bg-paper p-10 text-center text-muted">
+              <p className="mt-6 rounded-[20px] border border-dashed border-line-soft p-10 text-center text-muted">
                 {COPY.casinos.noResults}
               </p>
             ) : (
-              <ol className="flex flex-col gap-3.5">
+              <ol className={`mt-6 ${CASINO_GRID}`}>
                 {casinos.map((casino, i) => (
                   <CasinoCard key={casino.id} casino={casino} rank={i + 1} />
                 ))}
@@ -216,207 +180,161 @@ export default async function HomePage({ searchParams }: Props) {
             )}
 
             {activeCategory && hasMoreCasinos && (
-              <div className="mt-9 text-center">
-                <Link
-                  href={`/categories/${selected}`}
-                  aria-label={`See all ${casinosHeading(activeCategory.name)}`}
-                  className="inline-flex min-h-[46px] items-center rounded-xl border border-line-soft bg-transparent px-7 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
-                >
-                  See More <span aria-hidden className="ml-1.5">→</span>
+              <div className="mt-6 flex justify-center">
+                <Link href={`/categories/${selected}`} className="btn-o min-h-12 px-[22px] text-[15px]">
+                  {COPY.home.seeMoreCasinos}<span className="sr-only"> — {casinosHeading(activeCategory.name)}</span> <span aria-hidden>→</span>
                 </Link>
               </div>
             )}
           </div>
         </section>
 
-        {/* Bonus types — directly under the casino list.
-
-            The casinos are what visitors came for, so they come first under
-            the hero; the bonus-type chips follow as the next way in.
-
-            Renders nothing when the site does not publish the Bonus area, so
-            the band collapses rather than leaving a gap. */}
-        {bonusSections.length > 0 && (
-          <section className="px-5 pt-10 sm:pt-14">
-            <div className="mx-auto max-w-[1240px]">
-              {/* A raised walnut panel on the brown ground, lit from two corners so the row
-                  reads as one surface rather than a scatter of loose buttons.
-                  The wash is this brand's green, NOT
-                  another sibling's colour — the structure is shared, the
-                  colour never is */}
-              <div className="relative overflow-hidden rounded-3xl border border-line bg-paper p-6 shadow-[0_18px_40px_-30px_rgba(0,0,0,0.6)]">
-                {/* Decoration only. No -z-10: the panel paints its own
-                    background, and a layer sent behind it would never be seen.
-                    `overflow-hidden` on the panel is what keeps these discs
-                    inside the rounded corners instead of bleeding past them. */}
-                <div aria-hidden className="pointer-events-none absolute inset-0">
-                  <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(43,182,115,0.06),transparent_62%)]" />
-                  <div className="absolute -left-24 -top-28 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(43,182,115,0.10),transparent_70%)] blur-2xl" />
-                  <div className="absolute -right-20 -bottom-28 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(43,182,115,0.05),transparent_70%)] blur-2xl" />
-                </div>
-
-                {/* `relative` so the content sits above the decoration. */}
-                <div className="relative">
-                  <BonusCategoryNav sections={bonusSections} />
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Bonuses — one heading, then a block per bonus type, like winpalack.
-            Built from the same getBonusArea payload as the chips and the
-            header/footer Bonuses menus, so no block links to a type the menu
-            lacks. A site without the Bonus area keeps the flat grid below. */}
+        {/* Bonuses — the folder-tab index, built from the same getBonusArea
+            payload as the menus. A site without the Bonus area keeps the flat
+            grid below. */}
         {bonusSections.length > 0 ? (
-          <section className="px-5 pt-[72px]" aria-labelledby="bonus-heading">
-            <div className="mx-auto max-w-[1240px]">
-              <div className="mb-6 flex items-end justify-between gap-4">
-                <h2
-                  id="bonus-heading"
-                  className="font-display text-[30px] font-extrabold leading-[1.08] text-ink sm:text-[38px] lg:text-[46px]"
-                >
-                  {COPY.home.bonus}
-                </h2>
-                <Link
-                  href="/special-offers"
-                  className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap py-3 -my-3 text-[15px] font-bold text-brand transition-colors hover:text-brand-dark sm:inline-flex"
-                >
-                  {COPY.home.viewAll} <span aria-hidden>→</span>
+          <section className="pb-14 sm:pb-[72px]" aria-labelledby="bonus-heading">
+            <div className="mx-auto max-w-[1200px] px-4">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="lab">{COPY.home.bonusLabel}</p>
+                  <h2 id="bonus-heading" className={`mt-2.5 ${SECTION_H2}`}>
+                    {COPY.home.bonusTypesTitle}
+                  </h2>
+                </div>
+                <Link href="/special-offers" className="-my-3 inline-flex min-h-11 items-center py-3 font-semibold text-brand transition-colors hover:text-brand-dark">
+                  {COPY.home.viewAllBonuses} <span aria-hidden className="ml-1">→</span>
                 </Link>
               </div>
-              <div className="space-y-12">
-                {bonusSections.map((section) => (
-                  /* id: /#bonus-<slug> anchors, as on winpalack; scroll-mt clears the sticky header. */
-                  <div key={section.id} id={`bonus-${section.slug}`} className="scroll-mt-24">
-                    <div className="mb-5">
-                      <h3 className="font-display text-xl font-bold text-ink sm:text-2xl">
-                        <Link href={`/bonuses/${section.slug}`} className="transition-colors hover:text-brand-dark">
-                          {section.name}
-                        </Link>
-                      </h3>
-                      {section.description && <p className="mt-1 text-ink-soft">{section.description}</p>}
-                    </div>
-                    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
-                      {section.offers.map((offer) => <SpecialOfferCard key={offer.id} offer={offer} />)}
-                    </div>
-                    <div className="mt-5">
-                      <Link href={`/bonuses/${section.slug}`} aria-label={`${COPY.home.seeMore} — ${section.name}`} className="inline-flex min-h-[46px] items-center rounded-xl border border-line-soft bg-transparent px-7 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-ink">
-                        {COPY.home.seeMore} →
-                      </Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-9 text-center">
-                <Link href="/special-offers" aria-label={COPY.home.seeAllBonuses} className="inline-flex min-h-[46px] items-center rounded-xl border border-line-soft bg-transparent px-7 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-ink">
-                  {COPY.home.seeAllBonuses} →
-                </Link>
-              </div>
+              <BonusTabs sections={bonusSections} />
             </div>
           </section>
         ) : topOffers.length > 0 && (
-          <section className="px-5 pt-[72px]" aria-labelledby="offers-heading">
-            <div className="mx-auto max-w-[1240px]">
-              <div className="mb-6 flex items-end justify-between gap-4">
-                <h2
-                  id="offers-heading"
-                  className="font-display text-[30px] font-extrabold leading-[1.08] text-ink sm:text-[38px] lg:text-[46px]"
-                >
-                  {COPY.home.specialOffers}
-                </h2>
-                <Link
-                  href="/special-offers"
-                  className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap py-3 -my-3 text-[15px] font-bold text-brand transition-colors hover:text-brand-dark sm:inline-flex"
-                >
-                  {COPY.home.viewAll} <span aria-hidden>→</span>
+          <section className="pb-14 sm:pb-[72px]" aria-labelledby="offers-heading">
+            <div className="mx-auto max-w-[1200px] px-4">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="lab">{COPY.home.bonusLabel}</p>
+                  <h2 id="offers-heading" className={`mt-2.5 ${SECTION_H2}`}>
+                    {COPY.home.specialOffers}
+                  </h2>
+                </div>
+                <Link href="/special-offers" className="-my-3 inline-flex min-h-11 items-center py-3 font-semibold text-brand transition-colors hover:text-brand-dark">
+                  {COPY.home.viewAll}<span className="sr-only"> bonus offers</span> <span aria-hidden className="ml-1">→</span>
                 </Link>
               </div>
-              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className={`mt-6 ${OFFER_GRID}`}>
                 {topOffers.map((offer) => (
                   <SpecialOfferCard key={offer.id} offer={offer} />
                 ))}
               </div>
-
-              <div className="mt-9 text-center">
-                <Link
-                  href="/special-offers"
-                  aria-label="See all special offers"
-                  className="inline-flex min-h-[46px] items-center rounded-xl border border-line-soft bg-transparent px-7 py-3 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
-                >
-                  See More <span aria-hidden className="ml-1.5">→</span>
-                </Link>
-              </div>
             </div>
           </section>
         )}
 
-        {/* How we review — the method, in the order it happens.
-
-            Numbered because these three ARE a sequence: each step runs on the
-            output of the one before it. A numbered set that is not ordered is
-            decoration; this one is information, which is the test the markers
-            have to pass to earn their place. */}
-        <section className="px-5 pt-[72px]" aria-labelledby="method-heading">
-          <div className="mx-auto max-w-[1240px]">
-            <div className="mb-6">
-              <h2
-                id="method-heading"
-                className="font-display text-[30px] font-extrabold leading-[1.08] text-ink sm:text-[38px] lg:text-[46px]"
-              >
-                {COPY.home.methodTitle}
-              </h2>
-              <p className="mt-2 text-[17px] text-ink-soft">{COPY.home.methodSubtitle}</p>
+        {/* The yardstick — the four points every review covers, on the cream
+            paper under a ruler. A statement of method, the same for every
+            casino; it rates nothing. */}
+        <section className="pb-14 sm:pb-[72px]" aria-labelledby="yardstick-heading">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <div className="yard relative overflow-hidden rounded-3xl bg-card px-[18px] py-6 text-card-ink sm:p-8">
+              <div className="mt-2.5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+                <div>
+                  <p className="lab lab-card">{COPY.home.yardstickLabel}</p>
+                  <h2 id="yardstick-heading" className="mt-1.5 font-display text-[clamp(30px,3.6vw,44px)] leading-[1.05]">
+                    {COPY.home.yardstickTitle}
+                  </h2>
+                </div>
+                <p className="max-w-[420px] text-[15.5px] text-card-soft">{COPY.home.yardstickBody}</p>
+              </div>
+              <ol className="mt-[26px] grid grid-cols-1 gap-3.5 sm:grid-cols-2 min-[61.25rem]:grid-cols-4">
+                {COPY.home.yardstickPoints.map((point, i) => (
+                  <li key={point.key} className="yt flex flex-col gap-1.5 overflow-hidden rounded-[18px] border-[1.5px] border-card-line bg-white px-[18px] pb-5">
+                    <div aria-hidden className="tick -mx-[18px] mb-3.5 h-3" />
+                    <div className="flex items-center justify-between">
+                      <span aria-hidden className="flex h-[46px] w-[46px] items-center justify-center rounded-[14px] bg-mint text-pine">
+                        <PointIcon name={point.key} />
+                      </span>
+                      <span aria-hidden className="pn font-display text-[40px] leading-none text-card-line">
+                        {i + 1}
+                        <small className="ml-0.5 text-base">/{COPY.home.yardstickPoints.length}</small>
+                      </span>
+                    </div>
+                    <h3 className="mt-2 font-display text-2xl leading-[1.1]">{point.title}</h3>
+                    <p className="text-[14.5px] text-card-soft">{point.text}</p>
+                  </li>
+                ))}
+              </ol>
             </div>
-            <ol className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          </div>
+        </section>
+
+        {/* Method — the three checks down a vertical ruler, a green dot on
+            each (globals.css). Numbered because they ARE a sequence. */}
+        <section className="pb-14 sm:pb-[72px]" aria-labelledby="method-heading">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <p className="lab">{COPY.home.methodLabel}</p>
+            <h2 id="method-heading" className={`mt-2.5 ${SECTION_H2}`}>
+              {COPY.home.methodTitle}
+            </h2>
+            <p className="mt-3 max-w-[540px] text-ink-soft">{COPY.home.methodSubtitle}</p>
+            <ol className="steps relative mt-[30px] flex flex-col pl-[52px] sm:pl-[74px]">
               {COPY.home.methodSteps.map((step) => (
-                <li
-                  key={step.kicker}
-                  className="rounded-2xl border border-line bg-paper p-[26px]"
-                >
-                  <p className="font-display text-[15px] font-extrabold tracking-[0.08em] text-brand">
-                    {step.kicker}
-                  </p>
-                  <h3 className="font-display mb-2 mt-2.5 text-[22px] font-bold text-ink">
-                    {step.title}
-                  </h3>
-                  <p className="text-[15.5px] leading-relaxed text-ink-soft">{step.body}</p>
+                <li key={step.kicker} className="st relative border-b border-line pb-[30px] pt-5 last:border-b-0 last:pb-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">{step.kicker}</p>
+                  <h3 className="mt-1 font-display text-[clamp(28px,3.4vw,40px)] leading-[1.1]">{step.title}</h3>
+                  <p className="mt-2 max-w-[640px] text-[16.5px] text-ink-soft">{step.body}</p>
                 </li>
               ))}
             </ol>
           </div>
         </section>
 
-        {/* FAQ — rendered visibly because FAQPage structured data requires it.
-
-            A two-column grid, not three: these answers run to three or four
-            lines each, and a third column cuts the measure to the point where
-            every card becomes a paragraph of six short lines. */}
-        <section className="px-5 pb-4 pt-[72px]" aria-labelledby="faq-heading">
-          <div className="mx-auto max-w-[1240px]">
-            <h2
-              id="faq-heading"
-              className="font-display text-[30px] font-extrabold leading-[1.08] text-ink sm:text-[38px] lg:text-[46px]"
-            >
+        {/* FAQ — two columns of <details>. Every answer is in the HTML, which
+            the FAQPage schema above requires. */}
+        <section aria-labelledby="faq-heading">
+          <div className="mx-auto max-w-[1200px] px-4">
+            <p className="lab">{COPY.home.faqLabel}</p>
+            <h2 id="faq-heading" className={`mt-2.5 ${SECTION_H2}`}>
               {COPY.home.faqTitle}
             </h2>
-            <dl className="mt-6 grid gap-3.5 lg:grid-cols-2">
-              {FAQ_ITEMS.map((item) => (
-                <div
-                  key={item.question}
-                  className="rounded-2xl border border-line bg-paper p-[26px]"
-                >
-                  <dt className="font-display text-[19px] font-bold text-ink">{item.question}</dt>
-                  <dd className="mt-2.5 text-[15.5px] leading-relaxed text-ink-soft">
-                    {item.answer}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <FaqGrid items={FAQ_ITEMS} />
           </div>
         </section>
       </main>
     </>
+  )
+}
+
+/** A section heading — the mockup's `.sh h2`: the serif, very large. */
+const SECTION_H2 = 'font-display text-[36px] leading-none text-ink [overflow-wrap:break-word] sm:text-[clamp(36px,5vw,62px)]'
+
+/** The four yardstick icons, from the mockup. Decoration only. */
+function PointIcon({ name }: { name: string }) {
+  const paths: Record<string, React.ReactNode> = {
+    payouts: (
+      <>
+        <path d="M3 7h18v12H3z" />
+        <path d="M3 11h18M7 15h3" />
+      </>
+    ),
+    terms: (
+      <>
+        <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+        <path d="M14 3v6h6M8 13h8M8 17h5" />
+      </>
+    ),
+    licence: (
+      <>
+        <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z" />
+        <path d="m9 12 2 2 4-4" />
+      </>
+    ),
+    support: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+  }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      {paths[name]}
+    </svg>
   )
 }

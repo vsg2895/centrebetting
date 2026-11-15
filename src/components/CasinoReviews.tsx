@@ -34,7 +34,7 @@ export default async function CasinoReviews({
   return (
     <section className="mt-10" aria-labelledby="player-reviews">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="player-reviews" className="font-display text-2xl font-bold text-ink">
+        <h2 id="player-reviews" className="font-display text-2xl text-ink">
           {COPY.reviews.heading}
         </h2>
 

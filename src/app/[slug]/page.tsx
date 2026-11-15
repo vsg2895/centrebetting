@@ -111,15 +111,17 @@ export default async function LegalPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(graph) }} />
 
-      <main className="px-5 pb-16 pt-10">
-        <div className="mx-auto max-w-[780px]">
+      <main className="pb-16 pt-10">
+        <div className="mx-auto max-w-[780px] px-4">
           {/* Same last crumb as the BreadcrumbList above (`label`), so the
               visible trail and the markup do not name the page differently. */}
-          <nav className="mb-6 text-sm text-faint" aria-label="Breadcrumb">
-            <Link href="/" className="inline-block -mx-1 px-1 py-3 -my-3 hover:text-brand">Home</Link> / <span className="text-ink-soft" aria-current="page">{label}</span>
+          <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap gap-x-2 text-[13px] text-muted sm:mb-6">
+            <Link href="/" className="-mx-1 -my-3 inline-block px-1 py-3 transition-colors hover:text-brand">Home</Link>
+            /
+            <span className="font-semibold text-ink [overflow-wrap:anywhere]" aria-current="page">{label}</span>
           </nav>
 
-          <h1 className="font-display text-[34px] font-extrabold leading-[1.08] text-ink sm:text-[46px]">{page.title}</h1>
+          <h1 className="font-display text-[clamp(38px,11vw,46px)] leading-none text-ink [overflow-wrap:break-word] sm:text-[clamp(46px,6vw,72px)]">{page.title}</h1>
           {/* The date a policy last changed is part of the policy: "review it
               periodically" means nothing without one. The same value is the
               WebPage's dateModified above, so the page and its markup agree. */}
@@ -130,7 +132,7 @@ export default async function LegalPage({ params }: Props) {
           )}
 
           <article
-            className="prose mt-8 max-w-none prose-headings:font-bold prose-a:text-brand"
+            className="prose mt-8 max-w-none prose-a:text-brand"
             dangerouslySetInnerHTML={{ __html: page.content }}
           />
         </div>

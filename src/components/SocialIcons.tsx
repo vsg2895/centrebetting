@@ -35,16 +35,14 @@ function toExternalUrl(url: string): string {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed.replace(/^\/+/, '')}`
 }
 
-/** BetPulseHQ — bordered social pills; inverted in the footer via `onDark`. */
-// `onDark` is for this site's inverted footer, where `text-muted` and
-// `border-line` — both tuned against cream — lose their contrast. See the
-// night-* tokens in globals.css.
+/** Bordered social pills. `onCard` is for the cream footer, where the page's
+ * light-on-dark tokens would vanish; the paper ramp (card-*) takes over there. */
 export default function SocialIcons({
   links,
-  onDark = false,
+  onCard = false,
 }: {
   links: SocialLink[]
-  onDark?: boolean
+  onCard?: boolean
 }) {
   if (links.length === 0) return null
 
@@ -62,8 +60,8 @@ export default function SocialIcons({
               aria-label={name}
               title={name}
               className={`grid h-11 w-11 place-items-center rounded-full border backdrop-blur transition-colors ${
-                onDark
-                  ? 'border-night-line bg-white/5 text-night-ink hover:border-night-accent hover:text-white'
+                onCard
+                  ? 'border-card-line bg-white text-card-soft hover:border-card-ink hover:text-card-ink'
                   : 'border-line bg-paper/70 text-muted hover:border-brand hover:text-brand'
               }`}
             >

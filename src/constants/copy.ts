@@ -73,6 +73,26 @@ export const COPY = {
      * duplicate content.
      */
     bonusTypesTitle: 'Find A Bonus By Type',
+    // The green eyebrows over each home section.
+    compareLabel: 'Compare',
+    bonusLabel: 'Bonuses',
+    methodLabel: 'Method',
+    faqLabel: 'FAQ',
+    seeMoreCasinos: 'See more casinos',
+    viewAllBonuses: 'View all bonuses',
+    // ── The yardstick card ───────────────────────────────────────────────
+    // The four points every review covers, in the order it covers them. A
+    // statement of METHOD, the same for every casino — it rates nothing, so
+    // the "1/4 … 4/4" marks number the points, not a score.
+    yardstickLabel: 'The yardstick',
+    yardstickTitle: 'One yardstick for every operator',
+    yardstickBody: 'The same four points, in the same order, for every casino — so two reviews here can be compared directly.',
+    yardstickPoints: [
+      { key: 'payouts', title: 'Withdrawals', text: 'How it pays out' },
+      { key: 'terms', title: 'Bonus terms', text: 'How fair the terms are' },
+      { key: 'licence', title: 'Licensing', text: 'Who licenses it' },
+      { key: 'support', title: 'Support', text: 'How it behaves' },
+    ],
     heroEyebrow: 'Independent fair-play reviews',
     // Split in two so the JSX keeps its emphasised highlight while the words
     // change. The highlight is the brand's own phrase.
@@ -197,8 +217,9 @@ export const COPY = {
     // column 1.6fr of a four-track grid — roughly 360px — so this runs to two
     // or three lines there by design, unlike the two-column siblings where the
     // same string had to stay on one.
-    tagline:
-      'Your central guide to online casinos, reviewed on one fair-play yardstick. We may earn a commission from links on this site; it never changes a review.',
+    tagline: 'Your central guide to online casinos, reviewed on one fair-play yardstick.',
+    // The affiliate note under the tagline, on its own small paper slip.
+    commission: 'We may earn a commission from links on this site; it never changes a review.',
     // Registered postal address, shown under the copyright line, as supplied
     // by the operator — never invented. Keep it identical to the site's "Registered address"
     // setting in the admin, which feeds the legal pages and the Organization
@@ -235,7 +256,9 @@ export const COPY = {
     ratingSummary: (avg: number, total: number) =>
       `${avg.toFixed(1)} out of 5 from ${total} ${total === 1 ? 'review' : 'reviews'}`,
   },
-  // Labels on the phone-only hide / show toggle above each chip list.
+  // Group names: the sibling sites label their phone-only hide / show toggles
+  // with these; here `bonusTypes` names the folder tabs (BonusTabs). Kept with
+  // the network key structure.
   collapse: {
     casinoCategories: 'Casino categories',
     bonusTypes: 'Bonus types',

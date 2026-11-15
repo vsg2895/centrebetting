@@ -1,16 +1,18 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* centrebetting — warm walnut-brown ground, raised walnut panels, one
-   casino-felt green accent. Palette and type lifted from
-   sites/centrebetting.html.
-   Fonts: Outfit (body, eyebrows, the logo tagline) + DM Serif Display
-   (headings and the wordmark).
+/* CentreBetting — "one yardstick", from sites/centrebetting-redesign.html: a
+   dark espresso page with cream paper cards on it, a ruler motif marking the
+   four points every casino is measured on, folder-tab bonus index and a cream
+   footer. Fonts: Outfit (body) + DM Serif Display (headings, wordmark — one
+   weight, 400, never synthesised bold).
 
    TOKEN NAMES are identical to the sibling sites (cream/paper/ink/brand/…) so
-   every shared component works here unchanged — only the values differ. The
-   structure is netbetus's (fsozbet's, itself BetPulseHQ's dark re-theme), so a
-   dark band uses `night`, never `bg-ink`: here `ink` is the light text colour. */
+   every shared component works here unchanged — only the values differ.
+   THIS SITE IS DARK: `cream` is the espresso page, `paper` a raised panel,
+   `surface` a tile, and `ink` the LIGHT text colour. The cream paper cards
+   (casino cards, the yardstick, offer panels, the footer) use their own
+   `card-*` ramp, where the text is dark: `text-card-ink`, never `text-ink`. */
 :root {
   --background: #261b15;
   --foreground: #f3e9dc;
@@ -20,68 +22,67 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* `cream` is the page, `paper` a raised panel, `surface` a tile or chip
-     inside a panel. On a dark ground the ladder runs LIGHTER as it rises. */
+  /* The mockup's --bg / --bg2 / --panel. */
   --color-cream: #261b15;
-  --color-paper: #30231b;
-  --color-surface: #3a2a20;
+  --color-paper: #2e221b;
+  --color-surface: #372920;
 
+  /* --tx / --tx2 / --mute. */
   --color-ink: #f3e9dc;
-  --color-ink-soft: #d4c4b2;
-  --color-muted: #a8957f;
-  --color-faint: #a08d78;
+  --color-ink-soft: #cdbdae;
+  --color-muted: #a38f7f;
+  --color-faint: #a38f7f;
 
-  /* Felt green with DEEP GREEN text on it (#10261a), as in the mockup —
-     white on this green would not clear 3:1. */
-  --color-brand: #2bb673;
-  /* The hover step and the text on the green tint below: the mockup's lighter
-     `--primary-dk`, which keeps green text readable on the dark tint. */
-  --color-brand-dark: #4fcb8c;
-  /* Used as a FOREGROUND by shared components (`text-brand-soft`): the
-     mockup's bonus mint. */
+  /* Green. White on #2DB47A is under 3:1, so the text on every green fill is
+     the dark espresso (`brand-ink`, 7:1) and the hover goes LIGHTER. */
+  --color-brand: #2db47a;
+  --color-brand-dark: #5ed29e;
   --color-brand-soft: #7fe0ae;
-  /* The bonus bar's ground: green at 16% on the page brown, solid so it does
-     not shift over the panels. Background only. */
-  --color-brand-tint: #273424;
-  --color-brand-ink: #10261a;
+  --color-brand-tint: #273a2c;
+  --color-brand-ink: #1c140f;
 
-  /* The secondary action colour — the active filter pill, the icon tiles,
-     the focus ring. The mockup spends green on these too. */
-  --color-accent: #2bb673;
-  --color-accent-dark: #4fcb8c;
-  --color-accent-ink: #10261a;
+  --color-accent: #2db47a;
+  --color-accent-dark: #5ed29e;
+  --color-accent-ink: #1c140f;
 
-  --color-line: #4a372b;
-  --color-line-soft: #5a4535;
+  --color-line: #47362b;
+  --color-line-soft: #5a463a;
 
-  /* ── The night sub-palette ────────────────────────────────────────────────
-     The deepest grounds: the footer (#1b130f) and the banner wells; the
-     newsletter strip sits on the panel walnut, as in the mockup. */
-  --color-night: #1b130f;
-  --color-night-band: #30231b;
-  --color-night-ink: #d4c4b2;
-  --color-night-muted: #a8957f;
-  --color-night-faint: #a8957f;
-  --color-night-line: #3a2a20;
+  /* ── The cream paper ramp ─────────────────────────────────────────────────
+     --paper / --pline / --ink / --ink2, and the mockup's --pmute and
+     --green-d taken a step darker: #8A786A and #1F8F5F sit under 4.5:1 on
+     the paper at the sizes they are used (11–15px). `sand` is the footer. */
+  --color-card: #fbf6ef;
+  --color-card-line: #e6d9c8;
+  --color-card-ink: #261b15;
+  --color-card-soft: #5e4f44;
+  --color-card-muted: #75645a;
+  --color-pine: #16704a;
+  --color-mint: #e2f4ea;
+  --color-sand: #f3e9dc;
+
+  /* The deepest grounds: the legal bar, banner wells, the cookie panel. */
+  --color-night: #1c140f;
+  --color-night-band: #2e221b;
+  --color-night-ink: #cdbdae;
+  --color-night-muted: #a38f7f;
+  --color-night-faint: #a38f7f;
+  --color-night-line: #47362b;
   --color-night-accent: #7fe0ae;
 
-  /* Stars are amber-gold in the mockup. */
-  --color-gold: #f0b85a;
-  /* The UNFILLED star: clears 3:1 against both the page and the panels. */
-  --color-star-empty: #7a6553;
-  /* The factual chips (accepted regions, bonus terms): the mockup's mint. */
+  /* Amber stars and the folder-tab counts. */
+  --color-gold: #e8a84a;
+  /* The unfilled star, on the paper and on the page alike. */
+  --color-star-empty: #b8a593;
+  /* Factual chips on the dark page (regions on a dark tile). */
   --color-win: #7fe0ae;
-  --color-win-bg: #393a2d;
+  --color-win-bg: #273a2c;
 
   --font-sans: var(--font-outfit);
   --font-display: var(--font-dm-serif);
-  /* No monospace face in this design: the eyebrows are the body face, set in
-     spaced capitals. Mapped rather than removed so shared markup that asks
-     for `font-mono` keeps working. */
+  /* No monospace face in this design: mapped rather than removed so shared
+     markup that asks for `font-mono` keeps working. */
   --font-mono: var(--font-outfit);
-
-  /* 16px cards — the mockup's geometry. */
-  --radius-bp: 16px;
 }
 
 body {
@@ -91,58 +92,307 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.font-display {
-  font-family: var(--font-dm-serif), Georgia, serif;
-  letter-spacing: -0.02em;
+:focus-visible {
+  outline-color: var(--color-gold);
 }
 
-/* ── The eyebrow dot ─────────────────────────────────────────────────────────
-   The green heartbeat in the hero eyebrow: a ring that expands and fades, as
-   in the mockup. `prefers-reduced-motion` keeps the dot and drops the motion. */
-@keyframes cb-beat {
-  0% {
-    box-shadow: 0 0 0 0 rgba(43, 182, 115, 0.55);
+/* Components in their own layer so a utility on the element (tracking-*,
+   rounded-*, px-*) still wins over them. */
+@layer components {
+  .font-display {
+    font-family: var(--font-dm-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(43, 182, 115, 0);
+
+  /* The eyebrow — green, spaced capitals. On the paper it takes the deep
+     green (`.lab-card`). */
+  .lab {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand);
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(43, 182, 115, 0);
+  .lab-card {
+    color: var(--color-pine);
   }
-}
-.pulse-dot {
-  animation: cb-beat 1.6s infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .pulse-dot {
-    animation: none;
+
+  /* ── Buttons ─────────────────────────────────────────────────────────────
+     `btn-g` green, `btn-o` an outline on the page, `btn-l` the white outline
+     button on the cream paper. */
+  .btn-g,
+  .btn-o,
+  .btn-l {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    border: 1.5px solid transparent;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .btn-g {
+    background: var(--color-brand);
+    color: var(--color-brand-ink);
+  }
+  .btn-o {
+    border-color: var(--color-line-soft);
+    color: var(--color-ink);
+  }
+  .btn-l {
+    border-color: var(--color-card-line);
+    background: #fff;
+    color: var(--color-card-ink);
+  }
+
+  /* The ruler: fine ticks every 10px, taller every 50px, tallest every 100px. */
+  .ruler {
+    height: 22px;
+    background:
+      repeating-linear-gradient(90deg, var(--color-line-soft) 0 1px, transparent 1px 10px) bottom / 100% 7px no-repeat,
+      repeating-linear-gradient(90deg, var(--color-line-soft) 0 1.5px, transparent 1.5px 50px) bottom / 100% 14px no-repeat,
+      repeating-linear-gradient(90deg, var(--color-muted) 0 2px, transparent 2px 100px) bottom / 100% 22px no-repeat;
+  }
+  /* The same ruler hanging from the top edge of the cream footer. */
+  .ruler-sand {
+    height: 22px;
+    background:
+      repeating-linear-gradient(90deg, var(--color-card-muted) 0 1px, transparent 1px 10px) top / 100% 7px no-repeat,
+      repeating-linear-gradient(90deg, var(--color-card-muted) 0 1.5px, transparent 1.5px 50px) top / 100% 14px no-repeat,
+      repeating-linear-gradient(90deg, var(--color-card-soft) 0 2px, transparent 2px 100px) top / 100% 22px no-repeat;
+  }
+  /* The ruler along the top edge of the yardstick card. */
+  .yard::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 18px;
+    background:
+      repeating-linear-gradient(90deg, var(--color-card-line) 0 1px, transparent 1px 10px) top / 100% 8px no-repeat,
+      repeating-linear-gradient(90deg, #8a786a 0 1.5px, transparent 1.5px 50px) top / 100% 18px no-repeat;
+  }
+
+  /* The banner well on a casino / offer page: a green glow on espresso. */
+  .ban {
+    background:
+      radial-gradient(circle at 78% 28%, rgba(45, 180, 122, 0.3), transparent 45%),
+      linear-gradient(150deg, #3a2a20, #261b15 70%);
+  }
+
+  /* The green dot before the hero chip. */
+  .chip-dot::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-brand);
+  }
+
+  /* The method's vertical ruler and the green dot on each step. */
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    background:
+      repeating-linear-gradient(180deg, var(--color-line-soft) 0 1px, transparent 1px 12px) right / 9px 100% no-repeat,
+      repeating-linear-gradient(180deg, var(--color-muted) 0 2px, transparent 2px 60px) right / 18px 100% no-repeat;
+    border-right: 2px solid var(--color-muted);
+  }
+  .st::before {
+    content: '';
+    position: absolute;
+    left: -29px;
+    top: 30px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    box-shadow: 0 0 0 5px var(--color-cream);
+  }
+  @media (min-width: 40rem) {
+    .steps::before {
+      width: 46px;
+    }
+    .st::before {
+      left: -36px;
+    }
   }
 }
 
-/* The hero ground: a faint green glow from above the headline. A gradient, not
-   an image — no request. */
-.hero-wash {
+/* Interaction states — UNLAYERED on purpose, so a hover or open state beats
+   the resting utilities on the element; inside the components layer they
+   would lose to them. */
+a.btn-g:hover,
+button.btn-g:hover {
+  background: var(--color-brand-dark);
+  color: var(--color-brand-ink);
+}
+.btn-o:hover {
+  border-color: var(--color-ink);
+  color: var(--color-ink);
+}
+.btn-l:hover {
+  border-color: var(--color-card-ink);
+  color: var(--color-card-ink);
+}
+
+/* ── Casino cards: lift ─────────────────────────────────────────────────── */
+.cc {
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.cc:hover,
+.cc:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px -26px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Yardstick tiles: lift, the green rule draws along the tick strip ──── */
+.yt {
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.yt .tick {
   background:
-    radial-gradient(450px 260px at 50% -40px, rgba(43, 182, 115, 0.12), transparent),
-    var(--color-cream);
+    repeating-linear-gradient(90deg, var(--color-card-line) 0 1px, transparent 1px 8px) top left / 100% 8px no-repeat,
+    linear-gradient(var(--color-brand), var(--color-brand)) top left / 0% 3px no-repeat;
+  transition: background-size 0.4s;
+}
+.yt .pn {
+  transition: color 0.25s;
+}
+.yt:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-brand);
+  box-shadow: 0 18px 34px -22px rgba(38, 27, 21, 0.6);
+}
+.yt:hover .tick {
+  background-size: 100% 8px, 100% 3px;
+}
+.yt:hover .pn {
+  color: var(--color-brand);
 }
 
-/* The underline swash under the hero's green words: the mockup's soft green
-   bar behind the lower part of the text. */
-.hero-mark {
-  position: relative;
-  z-index: 0;
+/* ── Offer rows on the paper: the pill turns green ──────────────────────── */
+.of,
+.of-card {
+  transition: background-color 0.2s;
 }
-.hero-mark::after {
-  content: '';
+.of + .of {
+  border-top: 1px dashed var(--color-card-line);
+}
+.of-go {
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.of:hover .of-go,
+.of:focus-within .of-go,
+.of-card:hover .of-go,
+.of-card:focus-within .of-go {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-brand-ink);
+}
+.of-card {
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.of-card:hover,
+.of-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px -26px rgba(0, 0, 0, 0.7);
+}
+
+/* ── Folder tabs (BonusTabs) ────────────────────────────────────────────── */
+.ftab {
+  transition: background-color 0.2s, min-height 0.2s;
+}
+/* Only an unpicked tab lightens on hover; the picked one stays paper. */
+input:not(:checked) + .ftab:hover {
+  background: var(--color-line);
+}
+
+/* ── FAQ: details on the page that open onto the paper ─────────────────── */
+.faq summary {
+  list-style: none;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary::after {
+  content: '+';
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-line-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+  color: var(--color-brand);
+}
+.faq details[open] {
+  background: var(--color-card);
+  border-color: var(--color-card);
+  color: var(--color-card-ink);
+}
+.faq details[open] summary::after {
+  content: '\2013';
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-brand-ink);
+}
+
+/* ── Footer links: an arrow slides in on hover ─────────────────────────── */
+.fl {
+  position: relative;
+  transition: color 0.2s, padding 0.2s;
+}
+.fl::before {
+  content: '\2192';
   position: absolute;
+  left: -2px;
+  opacity: 0;
+  color: var(--color-pine);
+  transition: opacity 0.2s, left 0.2s;
+}
+.fl:hover {
+  color: var(--color-card-ink);
+  padding-left: 20px;
+}
+.fl:hover::before {
+  opacity: 1;
   left: 0;
-  right: 0;
-  bottom: 0.04em;
-  height: 0.12em;
-  border-radius: 4px;
-  background: rgba(43, 182, 115, 0.16);
-  z-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc,
+  .yt,
+  .yt .tick,
+  .of,
+  .of-card,
+  .of-go,
+  .ftab,
+  .fl,
+  .fl::before,
+  .btn-g,
+  .btn-o,
+  .btn-l {
+    transition: none;
+  }
+  .cc:hover,
+  .cc:focus-within,
+  .yt:hover,
+  .of-card:hover,
+  .of-card:focus-within {
+    transform: none;
+  }
 }
 
 /* ── Responsive safety net (all phones / tablets / laptops / large screens) ── */
@@ -223,7 +473,8 @@ body {
 }
 .prose :where(h1, h2, h3, h4, h5, h6) {
   color: var(--color-ink);
-  font-family: var(--font-dm-serif), system-ui, sans-serif;
+  font-family: var(--font-dm-serif), Georgia, serif;
+  font-weight: 400;
   letter-spacing: -0.02em;
 }
 .prose :where(strong, b, th, dt) {

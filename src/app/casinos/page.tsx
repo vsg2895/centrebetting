@@ -10,7 +10,7 @@ import {
   SHARE_IMAGES,
 } from '@/lib/seo'
 import { COPY } from '@/constants/copy'
-import CasinoCard from '@/components/CasinoCard'
+import CasinoCard, { CASINO_GRID } from '@/components/CasinoCard'
 import CategoryNav from '@/components/CategoryNav'
 import Pagination from '@/components/Pagination'
 import type { Category } from '@shared/types/category'
@@ -82,9 +82,9 @@ export default async function CasinosPage({ searchParams }: Props) {
 
   if (!selected) {
     return (
-      <main className="px-5 pb-12 pt-6 sm:pb-16 sm:pt-10">
-        <div className="mx-auto max-w-[1240px]">
-          <h1 className="font-display text-[26px] font-extrabold leading-[1.08] text-ink sm:text-[46px]">{COPY.casinos.pageTitle}</h1>
+      <main className="pb-12 pt-6 sm:pb-16 sm:pt-10">
+        <div className="mx-auto max-w-[1200px] px-4">
+          <h1 className="font-display text-[clamp(38px,11vw,46px)] leading-none text-ink [overflow-wrap:break-word] sm:text-[clamp(46px,6vw,72px)]">{COPY.casinos.pageTitle}</h1>
           <p className="mt-2 max-w-[680px] text-[17px] text-ink-soft">{COPY.casinos.noResults}</p>
         </div>
       </main>
@@ -143,25 +143,25 @@ export default async function CasinosPage({ searchParams }: Props) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(graph) }} />
-      <main className="px-5 pb-12 pt-6 sm:pb-16 sm:pt-10">
-        <div className="mx-auto max-w-[1240px]">
-          <header className="mb-4 sm:mb-8">
-            <h1 className="font-display text-[26px] font-extrabold leading-[1.08] text-ink sm:text-[46px]">{COPY.casinos.pageTitle}</h1>
-            <p className="mt-1 max-w-[680px] text-[15px] text-ink-soft sm:mt-2 sm:text-[17px]">{COPY.casinos.pageDescription}</p>
+      <main className="pb-12 pt-6 sm:pb-16 sm:pt-10">
+        <div className="mx-auto max-w-[1200px] px-4">
+          <header className="mb-6 sm:mb-8">
+            <h1 className="font-display text-[clamp(38px,11vw,46px)] leading-none text-ink [overflow-wrap:break-word] sm:text-[clamp(46px,6vw,72px)]">{COPY.casinos.pageTitle}</h1>
+            <p className="mt-3 max-w-[640px] text-[17px] text-ink-soft">{COPY.casinos.pageDescription}</p>
           </header>
 
           {/* Category menu — top of the casinos list */}
           <div className="mb-5 sm:mb-8"><CategoryNav categories={cats} selected={selected} /></div>
 
           <div className="mb-4 flex items-baseline justify-between">
-            <h2 className="font-display text-[20px] sm:text-[24px] font-bold text-ink">{category.name}</h2>
+            <h2 className="font-display text-[26px] leading-tight text-ink sm:text-[32px]">{category.name}</h2>
             <span className="text-[14.5px] text-muted">{meta.total} casinos</span>
           </div>
 
           {casinos.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-line bg-paper p-10 text-center text-muted">{COPY.casinos.noResults}</p>
+            <p className="rounded-[20px] border border-dashed border-line-soft p-10 text-center text-muted">{COPY.casinos.noResults}</p>
           ) : (
-            <ol className="flex flex-col gap-3.5">
+            <ol className={CASINO_GRID}>
               {casinos.map((casino, i) => (
                 <CasinoCard key={casino.id} casino={casino} rank={(meta.current_page - 1) * meta.per_page + i + 1} />
               ))}
