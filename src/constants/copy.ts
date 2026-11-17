@@ -190,7 +190,7 @@ export const COPY = {
   newsletter: {
     title: 'The CentreBetting weekly brief.',
     subtitle: 'Fresh reviews, offers worth a look and who moved up or down — once a week, nothing more.',
-    placeholder: 'Email address',
+    placeholder: 'Email for new measurements',
     button: 'Subscribe',
     // Shown while the address is being checked. The subscribe request waits on
     // a live address-validation call, so the button has to say so rather than
@@ -245,6 +245,9 @@ export const COPY = {
     ratingLabel: 'Rating',
     titleLabel: 'Headline (optional)',
     bodyLabel: 'Your review',
+    namePlaceholder: 'First name or nickname',
+    emailPlaceholder: 'you@example.com',
+    titlePlaceholder: 'One line on how it measured up',
     bodyPlaceholder: 'What went well, what did not, and did you get paid?',
     submit: 'Share Review',
     // Two outcomes, because the site can run pre- or post-moderation
